@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
     "./pages/*.{js,ts,jsx,tsx}",
@@ -6,7 +7,11 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "mobile-hero": "url('../public/images/Chefchaouen.jpg')",
+      },
+    },
+    plugins: [],
   },
-  plugins: [],
 };
