@@ -1,8 +1,18 @@
-import Head from "next/head";
+// import Head from "next/head";
 //import styles from "@/styles/Home.module.css";
 import Login from "./login";
+import { useSession } from "@supabase/auth-helpers-react";
+import Account from "./components/account";
 
 export default function Home() {
+  const session = useSession();
+
+  return (
+    <div className="container" style={{ padding: "50px 0 100px 0" }}>
+      {!session ? <Login /> : <Account session={session} />}
+    </div>
+  );
+
   return (
     <>
       <Head>

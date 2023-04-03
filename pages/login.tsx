@@ -1,5 +1,17 @@
-import HeaderLoginMobile from "./components/headerLoginMobile";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-export default function Login() {
-  return <HeaderLoginMobile />;
-}
+const Login = () => {
+  const supabase = useSupabaseClient();
+
+  return (
+    <Auth
+      supabaseClient={supabase}
+      appearance={{ theme: ThemeSupa }}
+      theme="dark"
+    />
+  );
+};
+
+export default Login;
