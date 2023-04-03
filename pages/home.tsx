@@ -64,17 +64,23 @@ export default function Home() {
   };
 
   return (
-    <Account
-      session={session}
-      supabase={supabase}
-      user={user}
-      loading={loading}
-      setLoading={setLoading}
-      username={username}
-      setUsername={setUsername}
-      avatar_url={avatar_url}
-      setAvatarUrl={setAvatarUrl}
-      updateProfile={updateProfile}
-    />
+    <>
+      {!username ? (
+        <Account
+          session={session}
+          supabase={supabase}
+          user={user}
+          loading={loading}
+          setLoading={setLoading}
+          username={username}
+          setUsername={setUsername}
+          avatar_url={avatar_url}
+          setAvatarUrl={setAvatarUrl}
+          updateProfile={updateProfile}
+        />
+      ) : (
+        <h1>{`WELCOME ${username}`}</h1>
+      )}
+    </>
   );
 }
