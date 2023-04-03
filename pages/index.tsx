@@ -2,9 +2,9 @@ import Head from "next/head";
 //import styles from "@/styles/Home.module.css";
 import Login from "./login";
 import { useSession } from "@supabase/auth-helpers-react";
-import Account from "./components/account";
+import Home from "./home";
 
-export default function Home() {
+export default function Index() {
   const session = useSession();
 
   return (
@@ -17,7 +17,7 @@ export default function Home() {
       </Head>
       <main className="flex h-screen w-full">
         <div className="container" style={{ padding: "50px 0 100px 0" }}>
-          {!session ? <Login /> : <Account session={session} />}
+          {!session ? <Login /> : <Home />}
         </div>
       </main>
     </>
