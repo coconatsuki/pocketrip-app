@@ -1,66 +1,15 @@
-import { useState, useEffect } from "react";
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import Avatar from "./avatar";
 
-export default function Account({ session }) {
-  const supabase = useSupabaseClient();
-  const user = useUser();
-  const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState(null);
-  const [avatar_url, setAvatarUrl] = useState(null);
-
-  useEffect(() => {
-    getProfile();
-  }, [session]);
-
-  async function getProfile() {
-    try {
-      setLoading(true);
-
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`username, avatar_url`)
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        setUsername(data.username);
-        setAvatarUrl(data.avatar_url);
-      }
-    } catch (error) {
-      alert("Error loading user data!");
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function updateProfile({ username, avatar_url }) {
-    try {
-      setLoading(true);
-
-      const updates = {
-        id: user.id,
-        username,
-        avatar_url,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { error } = await supabase.from("profiles").upsert(updates);
-      if (error) throw error;
-      alert("Profile updated!");
-    } catch (error) {
-      alert("Error updating the data!");
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
+export default function Account({
+  session,
+  supabase,
+  user,
+  loading,
+  username,
+  setUsername,
+  avatar_url,
+  setAvatarUrl,
+}) {
   return (
     <div className="form-widget">
       <Avatar
@@ -69,7 +18,7 @@ export default function Account({ session }) {
         size={150}
         onUpload={(url) => {
           setAvatarUrl(url);
-          updateProfile({ username, website, avatar_url: url });
+          updateProfile({ username, avatar_url: url });
         }}
       />
       <div>
