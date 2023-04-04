@@ -7,19 +7,18 @@ export default function Account({
   loading,
   username,
   setUsername,
-  avatar_url,
-  setAvatarUrl,
+  avatarUrl,
+  updateProfile,
+  uploadAvatar,
+  uploadingAvatar,
 }) {
   return (
     <div className="form-widget">
       <Avatar
-        uid={user.id}
-        url={avatar_url}
         size={150}
-        onUpload={(url) => {
-          setAvatarUrl(url);
-          updateProfile({ username, avatar_url: url });
-        }}
+        uploadAvatar={uploadAvatar}
+        uploadingAvatar={uploadingAvatar}
+        avatarUrl={avatarUrl}
       />
       <div>
         <label htmlFor="email">Email</label>
@@ -38,7 +37,7 @@ export default function Account({
       <div>
         <button
           className="button primary block"
-          onClick={() => updateProfile({ username, avatar_url })}
+          onClick={() => updateProfile(user)}
           disabled={loading}
         >
           {loading ? "Loading ..." : "Update"}
