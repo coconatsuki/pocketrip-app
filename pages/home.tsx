@@ -142,19 +142,17 @@ export default function Home() {
         <div>
           <h1>{`WELCOME ${username}`}</h1>
           {avatar_url && !uploadingAvatar && (
-            <img
-              src={avatar_url}
-              alt="Avatar"
-              className="avatar image"
-              style={{ height: 200, width: 200 }}
-            />
+            <div className="relative w-48 h-48">
+              <Image
+                src={avatar_url}
+                fill
+                alt="avatar"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
           )}
         </div>
       )}
     </>
   );
-}
-
-{
-  /* <Image src={avatar_url} width={400} height={400} alt="avatar" /> */
 }
