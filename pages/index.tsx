@@ -2,7 +2,8 @@ import Head from "next/head";
 //import styles from "@/styles/Home.module.css";
 import Login from "./login";
 import { useSession } from "@supabase/auth-helpers-react";
-import Home from "./home";
+// import Home from "./home";
+import Profile from "./profile";
 
 export default function Index() {
   const session = useSession();
@@ -17,7 +18,7 @@ export default function Index() {
       </Head>
       <main className="flex h-screen w-full">
         <div className="container" style={{ padding: "50px 0 100px 0" }}>
-          {!session ? <Login /> : <Home />}
+          {!session ? <Login /> : <Profile />}
         </div>
       </main>
     </>

@@ -1,25 +1,27 @@
-import Avatar from "./avatar";
+// import Avatar from "./avatar";
+import { useState } from "react";
 
 export default function Account({
   session,
   supabase,
   user,
   loading,
-  username,
-  setUsername,
-  avatarUrl,
+  oldUsername,
+  // avatarUrl,
   updateProfile,
-  uploadAvatar,
-  uploadingAvatar,
+  // uploadAvatar,
+  // uploadingAvatar,
 }) {
+  const [newUserName, setNewUserName] = useState(null);
+
   return (
     <div className="form-widget">
-      <Avatar
+      {/* <Avatar
         size={150}
         uploadAvatar={uploadAvatar}
         uploadingAvatar={uploadingAvatar}
         avatarUrl={avatarUrl}
-      />
+      /> */}
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />
@@ -29,15 +31,17 @@ export default function Account({
         <input
           id="username"
           type="text"
-          value={username || ""}
-          onChange={(e) => setUsername(e.target.value)}
+          value={newUserName || ""}
+          onChange={(e) => setNewUserName(e.target.value)}
         />
       </div>
 
       <div>
         <button
           className="button primary block"
-          onClick={() => updateProfile(user)}
+          onClick={() => updateProfile({ username: newUserName })}
+          // onClick={() => updateProfile(newUserName, newAvatar)}
+
           disabled={loading}
         >
           {loading ? "Loading ..." : "Update"}
