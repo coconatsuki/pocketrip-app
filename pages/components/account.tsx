@@ -1,47 +1,45 @@
-// import Avatar from "./avatar";
+import Avatar from "./avatar";
 import { useState } from "react";
 
 export default function Account({
-  session,
   supabase,
-  user,
+  session,
   loading,
   oldUsername,
-  // avatarUrl,
+  avatarUrl,
   updateProfile,
-  // uploadAvatar,
-  // uploadingAvatar,
 }) {
-  const [newUserName, setNewUserName] = useState(null);
+  const [username, setUsername] = useState(oldUsername);
+  const [avatar_url, setAvatarUrl] = useState(avatarUrl);
 
   return (
-    <div className="form-widget">
-      {/* <Avatar
+    <form onSubmit={updateProfile} className="form-widget">
+      <Avatar
+        url={avatar_url}
         size={150}
-        uploadAvatar={uploadAvatar}
-        uploadingAvatar={uploadingAvatar}
-        avatarUrl={avatarUrl}
-      /> */}
+        onUpload={(event, url) => {
+          setAvatarUrl(url);
+          updateProfile(event);
+        }}
+      />
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />
       </div>
       <div>
-        <label htmlFor="username">Username</label>
+        <label htmlFor="username">Name</label>
         <input
           id="username"
           type="text"
-          value={newUserName || ""}
-          onChange={(e) => setNewUserName(e.target.value)}
+          required
+          value={username || ""}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-
       <div>
         <button
-          className="button primary block"
-          onClick={() => updateProfile({ username: newUserName })}
-          // onClick={() => updateProfile(newUserName, newAvatar)}
-
+          className="button block primary"
+          type="submit"
           disabled={loading}
         >
           {loading ? "Loading ..." : "Update"}
@@ -51,11 +49,12 @@ export default function Account({
       <div>
         <button
           className="button block"
+          type="button"
           onClick={() => supabase.auth.signOut()}
         >
           Sign Out
         </button>
       </div>
-    </div>
+    </form>
   );
 }

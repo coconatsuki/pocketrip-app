@@ -18,7 +18,7 @@ export default function Index() {
       </Head>
       <main className="flex h-screen w-full">
         <div className="container" style={{ padding: "50px 0 100px 0" }}>
-          {!session ? <Login /> : <Profile />}
+          {!session ? <Login /> : <Profile session={session} />}
         </div>
       </main>
     </>
