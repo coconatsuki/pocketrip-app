@@ -5,6 +5,7 @@ export const getProfile = async ({
   setUsername,
   setAvatarPath,
 }) => {
+  let username;
   try {
     setLoading(true);
 
@@ -21,6 +22,7 @@ export const getProfile = async ({
     if (data) {
       setUsername(data.username);
       setAvatarPath(data.avatar_url);
+      username = data.username;
     }
   } catch (error) {
     alert("Error loading user data!");
@@ -28,6 +30,7 @@ export const getProfile = async ({
   } finally {
     setLoading(false);
   }
+  return username;
 };
 
 export const downloadAvatar = async ({

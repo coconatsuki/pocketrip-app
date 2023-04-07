@@ -16,11 +16,18 @@ export default function Home() {
   const [avatar_path, setAvatarPath] = useState(null);
 
   useEffect(() => {
-    getProfile({ supabase, setLoading, user, setUsername, setAvatarPath });
-    // console.log(`username? ${!!username} ${username}`);
-    // if (!username) {
-    //   router.push("/profile");
-    // }
+    getProfile({
+      supabase,
+      setLoading,
+      user,
+      setUsername,
+      setAvatarPath,
+    }).then((username) => {
+      console.log(`username? ${!!username} ${username}`);
+      if (!username) {
+        router.push("/profile");
+      }
+    });
   }, [session]);
 
   useEffect(() => {
