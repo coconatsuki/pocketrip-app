@@ -1,14 +1,17 @@
+import { useSession } from "@supabase/auth-helpers-react";
 import { useState, useEffect } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { getProfile, downloadAvatar } from "./api/profile";
 import Avatar from "./components/avatar";
 
-export default function Profile({ session }) {
+export default function Profile() {
   const supabase = useSupabaseClient();
-  const { user } = session;
+  const session = useSession();
+  const user = useUser();
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
   const [avatar_url, setAvatarUrl] = useState(null);
+  const [avatar_path, setAvatarPath] = useState(null);
 
   useEffect(() => {
     getProfile({
@@ -16,28 +19,13 @@ export default function Profile({ session }) {
       setLoading,
       user,
       setUsername,
-      setAvatarPath: setAvatarUrl,
+      setAvatarPath,
     });
   }, [session]);
 
-  //   const getProfile = async () => {
-  //     setLoading(true);
-
-  //     const { data, error } = await supabase
-  //       .from("profiles")
-  //       .select(`username, avatar_url`)
-  //       .eq("id", user.id)
-  //       .single();
-
-  //     if (error) {
-  //       console.warn(error);
-  //     } else if (data) {
-  //       setUsername(data.username);
-  //       setAvatarUrl(data.avatar_url);
-  //     }
-
-  //     setLoading(false);
-  //   };
+  useEffect(() => {
+    if (avatar_path) downloadAvatar({ supabase, avatar_path, setAvatarUrl });
+  }, [avatar_path]);
 
   async function updateProfile(event) {
     event.preventDefault();
@@ -47,7 +35,7 @@ export default function Profile({ session }) {
     const updates = {
       id: user.id,
       username,
-      avatar_url,
+      avatar_url: avatar_path,
       updated_at: new Date(),
     };
 
@@ -63,10 +51,10 @@ export default function Profile({ session }) {
     <form onSubmit={updateProfile} className="form-widget">
       <Avatar
         supabase={supabase}
-        url={avatar_url}
+        avatar_path={avatar_path}
         size={150}
         onUpload={(event, url) => {
-          setAvatarUrl(url);
+          setAvatarPath(url);
           updateProfile(event);
         }}
       />

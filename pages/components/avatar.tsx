@@ -1,27 +1,13 @@
 import { useEffect, useState } from "react";
+import { downloadAvatar } from "./../api/profile";
 
-export default function Avatar({ supabase, url, size, onUpload }) {
+export default function Avatar({ supabase, avatar_path, size, onUpload }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (url) downloadImage(url);
-  }, [url]);
-
-  async function downloadImage(path) {
-    try {
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .download(path);
-      if (error) {
-        throw error;
-      }
-      const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
-    } catch (error) {
-      console.log("Error downloading image: ", error.message);
-    }
-  }
+    if (avatar_path) downloadAvatar({ supabase, avatar_path, setAvatarUrl });
+  }, [avatar_path]);
 
   async function uploadAvatar(event) {
     try {
