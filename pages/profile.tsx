@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { getProfile, downloadAvatar } from "./api/profile";
 import Avatar from "./components/avatar";
 
 export default function Profile({ session }) {
@@ -10,27 +11,33 @@ export default function Profile({ session }) {
   const [avatar_url, setAvatarUrl] = useState(null);
 
   useEffect(() => {
-    getProfile();
+    getProfile({
+      supabase,
+      setLoading,
+      user,
+      setUsername,
+      setAvatarPath: setAvatarUrl,
+    });
   }, [session]);
 
-  const getProfile = async () => {
-    setLoading(true);
+  //   const getProfile = async () => {
+  //     setLoading(true);
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select(`username, avatar_url`)
-      .eq("id", user.id)
-      .single();
+  //     const { data, error } = await supabase
+  //       .from("profiles")
+  //       .select(`username, avatar_url`)
+  //       .eq("id", user.id)
+  //       .single();
 
-    if (error) {
-      console.warn(error);
-    } else if (data) {
-      setUsername(data.username);
-      setAvatarUrl(data.avatar_url);
-    }
+  //     if (error) {
+  //       console.warn(error);
+  //     } else if (data) {
+  //       setUsername(data.username);
+  //       setAvatarUrl(data.avatar_url);
+  //     }
 
-    setLoading(false);
-  };
+  //     setLoading(false);
+  //   };
 
   async function updateProfile(event) {
     event.preventDefault();
