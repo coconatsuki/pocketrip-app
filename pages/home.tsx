@@ -22,12 +22,13 @@ export default function Home() {
       user,
       setUsername,
       setAvatarPath,
-    }).then((username) => {
-      console.log(`username? ${!!username} ${username}`);
-      if (!username) {
-        router.push("/profile");
-      }
     });
+    // .then((username) => {
+    //   console.log(`username? ${!!username} ${username}`);
+    //   if (!username) {
+    //     router.push("/profile");
+    //   }
+    // });
   }, [session]);
 
   useEffect(() => {

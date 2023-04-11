@@ -3,7 +3,6 @@ import Head from "next/head";
 import Login from "./login";
 import { useSession } from "@supabase/auth-helpers-react";
 import Home from "./home";
-import Profile from "./profile";
 
 export default function Index() {
   const session = useSession();
