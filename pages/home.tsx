@@ -1,86 +1,83 @@
 // import { useSession } from "@supabase/auth-helpers-react";
-// import { useState, useEffect } from "react";
-// import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
-// import Image from "next/image";
-// import { getProfile, downloadAvatar } from "./api/profile";
-
-// export default function Home() {
-//   const session = useSession();
-//   const supabase = useSupabaseClient();
-//   const user = useUser();
-//   const [loading, setLoading] = useState(true);
-//   const [username, setUsername] = useState(null);
-//   const [avatar_url, setAvatarUrl] = useState(null);
-//   const [avatar_path, setAvatarPath] = useState(null);
-
-//   useEffect(() => {
-//     getProfile({
-//       supabase,
-//       setLoading,
-//       user,
-//       setUsername,
-//       setAvatarPath,
-//     });
-//   }, [session]);
-
-//   useEffect(() => {
-//     if (avatar_path) downloadAvatar({ supabase, avatar_path, setAvatarUrl });
-//   }, [avatar_path]);
-
-//   return (
-//     <>
-//       <div>
-//         <h1>{`WELCOME ${username}`}</h1>
-//         {avatar_url && (
-//           <div className="relative w-48 h-48">
-//             <Image
-//               src={avatar_url}
-//               fill
-//               alt="avatar"
-//               style={{ objectFit: "cover" }}
-//             />
-//           </div>
-//         )}
-//       </div>
-//     </>
-//   );
-// }
-
+import { useState, useEffect } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Image from "next/image";
+import Link from "next/link";
+import { downloadAvatar, getProfileServerSide } from "./api/profile";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSidePropsContext } from "next";
 
-export default function Home({ data, session }) {
-  return <div>Hello {data && data.username}</div>;
+export default function Home({ username, avatar_path }) {
+  const supabase = useSupabaseClient();
+  const [loading, setLoading] = useState(true);
+  const [avatar_url, setAvatarUrl] = useState(null);
+
+  useEffect(() => {
+    if (avatar_path) {
+      setLoading(true);
+      downloadAvatar({ supabase, avatar_path, setAvatarUrl }).then(() =>
+        setLoading(false)
+      );
+    }
+  }, [avatar_path]);
+
+  return (
+    <>
+      <div>
+        <h1>{`WELCOME ${username}`}</h1>
+        {avatar_url && (
+          <div className="relative w-48 h-48">
+            {loading ? (
+              "loading"
+            ) : (
+              <Image
+                src={avatar_url}
+                fill
+                alt="avatar"
+                style={{ objectFit: "cover" }}
+              />
+            )}
+          </div>
+        )}
+        <Link href="/profile">Edit Profile</Link>
+      </div>
+    </>
+  );
 }
 
-export async function getServerSideProps(context) {
-  const supabase = createServerSupabaseClient(context);
-  // Check if we have a session
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (session) {
-    const userId = session.user.id;
-
-    const { data, error, status } = await supabase
-      .from("profiles")
-      // .select(`username, avatar_url`)
-      .select(`username`)
-      .eq("id", userId)
-      .single();
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
   }
-  console.log("data: ", data, "session: ", session);
 
-  // if (!data) {
-  //   return {
-  //     redirect: {
-  //       destination: '/',
-  //       permanent: false,
-  //     },
-  //   }
-  // }
+  const userId = session.user.id;
+
+  const { username, avatar_url } = await getProfileServerSide(supabase, userId);
+
+  if (!username) {
+    return {
+      redirect: {
+        destination: "/profile",
+        permanent: false,
+      },
+    };
+  }
 
   return {
-    props: { data, session },
+    props: {
+      username,
+      avatar_path: avatar_url,
+    },
   };
-}
+};

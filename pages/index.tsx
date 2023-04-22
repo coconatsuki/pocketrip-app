@@ -1,12 +1,11 @@
 import Head from "next/head";
 //import styles from "@/styles/Home.module.css";
 import Login from "./login";
-import { useSession } from "@supabase/auth-helpers-react";
-import Home from "./home";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSidePropsContext } from "next";
+import { getProfileServerSide } from "./api/profile";
 
-export default function Index() {
-  const session = useSession();
-
+export default function Index({ session }) {
   return (
     <>
       <Head>
@@ -17,9 +16,45 @@ export default function Index() {
       </Head>
       <main className="flex h-screen w-full">
         <div className="container" style={{ padding: "50px 0 100px 0" }}>
-          {!session ? <Login /> : <Home />}
+          {!session && <Login />}
         </div>
       </main>
     </>
   );
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session && session.user.id) {
+    const userId = session.user.id;
+
+    const { username } = await getProfileServerSide(supabase, userId);
+
+    if (username) {
+      return {
+        redirect: {
+          destination: "/home",
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        redirect: {
+          destination: "/profile",
+          permanent: false,
+        },
+      };
+    }
+  }
+
+  return {
+    props: {
+      initialSession: session,
+    },
+  };
+};

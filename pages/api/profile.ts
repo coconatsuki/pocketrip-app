@@ -51,3 +51,19 @@ export const downloadAvatar = async ({
     console.log("Error downloading image: ", error.message);
   }
 };
+
+export const getProfileServerSide = async (supabase, userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(`username, avatar_url`)
+      .eq("id", userId)
+      .single();
+    if (error) {
+      throw error;
+    }
+    return { username: data.username, avatar_url: data.avatar_url };
+  } catch (error) {
+    console.log("Error getting user data");
+  }
+};
