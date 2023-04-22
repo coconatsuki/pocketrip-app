@@ -1,11 +1,24 @@
 import Head from "next/head";
 //import styles from "@/styles/Home.module.css";
+import { useSession } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import Login from "./login";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 import { getProfileServerSide } from "./api/profile";
 
-export default function Index({ session }) {
+export default function Index() {
+  const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
   return (
     <>
       <Head>
@@ -33,7 +46,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   if (session && session.user.id) {
     const userId = session.user.id;
 
-    const { username } = await getProfileServerSide(supabase, userId);
+    const { username }: { username: string | null } =
+      await getProfileServerSide(supabase, userId);
 
     if (username) {
       return {
@@ -54,7 +68,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   return {
     props: {
-      initialSession: session,
+      // initialSession: session,
+      // session,
     },
   };
 };

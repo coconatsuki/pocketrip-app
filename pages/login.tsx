@@ -11,6 +11,7 @@ const Login = () => {
       appearance={{ theme: ThemeSupa }}
       theme="dark"
       providers={["google", "facebook"]}
+      children={<input type="text" />}
     />
   );
 };
