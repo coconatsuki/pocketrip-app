@@ -6,6 +6,13 @@ export type Json =
   | { [key: string]: Json }
   | Json[];
 
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type Username =
+  Database["public"]["Tables"]["profiles"]["Row"]["username"];
+export type AvatarUrl =
+  Database["public"]["Tables"]["profiles"]["Row"]["avatar_url"];
+export type User = { id: string; email: string };
+
 export interface Database {
   public: {
     Tables: {

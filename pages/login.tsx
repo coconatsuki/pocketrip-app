@@ -11,6 +11,7 @@ const Login = () => {
       appearance={{ theme: ThemeSupa }}
       theme="dark"
       providers={["google", "facebook"]}
+      // eslint-disable-next-line react/no-children-prop
       children={<input type="text" />}
     />
   );

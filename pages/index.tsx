@@ -7,6 +7,7 @@ import Login from "./login";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 import { getProfileServerSide } from "./api/profile";
+import { Database } from "./../lib/database.types";
 
 export default function Index() {
   const session = useSession();
@@ -36,18 +37,23 @@ export default function Index() {
   );
 }
 
+// ctx contains:
+// "params"	(If this page uses a dynamic route, params contains the route)
+// "req" (The HTTP IncomingMessage object+cookies prop)
+// res	(The HTTP response object.)
+// query	(An object representing the query string, including dynamic route parameters.)
+
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createServerSupabaseClient<Database>(ctx);
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   if (session && session.user.id) {
-    const userId = session.user.id;
+    const userId: string = session.user.id;
 
-    const { username }: { username: string | null } =
-      await getProfileServerSide(supabase, userId);
+    const { username } = await getProfileServerSide(supabase, userId);
 
     if (username) {
       return {

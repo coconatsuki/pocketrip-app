@@ -5,12 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { downloadAvatar, getProfileServerSide } from "./api/profile";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 
-export default function Home({ username, avatar_path }) {
+const Home: NextPage<{
+  username: string | null;
+  avatar_path: string | null;
+}> = ({ username, avatar_path }) => {
   const supabase = useSupabaseClient();
-  const [loading, setLoading] = useState(true);
-  const [avatar_url, setAvatarUrl] = useState(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [avatar_url, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (avatar_path) {
@@ -43,9 +46,11 @@ export default function Home({ username, avatar_path }) {
       </div>
     </>
   );
-}
+};
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+export const getServerSideProps: GetServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
   const supabase = createServerSupabaseClient(ctx);
 
   const {
@@ -61,7 +66,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
-  const userId = session.user.id;
+  const userId: string = session.user.id;
 
   const { username, avatar_url } = await getProfileServerSide(supabase, userId);
 
@@ -81,3 +86,5 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     },
   };
 };
+
+export default Home;

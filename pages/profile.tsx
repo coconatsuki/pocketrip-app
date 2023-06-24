@@ -3,6 +3,7 @@ import { useState, useEffect, SyntheticEvent } from "react";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { getProfile, downloadAvatar } from "./api/profile";
 import { useRouter } from "next/router";
+import { User } from "./../../lib/database.types";
 
 import Link from "next/link";
 
@@ -11,7 +12,7 @@ import Avatar from "./components/avatar";
 export default function Profile() {
   const supabase = useSupabaseClient();
   const session = useSession();
-  const user = useUser();
+  const user: User = useUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [username, setUsername] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
@@ -42,13 +43,13 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [avatar_path]);
 
-  async function updateProfile(event: SyntheticEvent) {
+  async function updateProfile(event: SyntheticEvent): Promise<void> {
     event.preventDefault();
 
     setLoading(true);
 
     const updates = {
-      id: user.id,
+      id: user?.id,
       username,
       avatar_url: avatar_path,
       updated_at: new Date(),
@@ -62,7 +63,7 @@ export default function Profile() {
     setLoading(false);
   }
 
-  function checkUsername() {
+  function checkUsername(): void {
     !username && setDisplayUsernameWarning(true);
   }
 
